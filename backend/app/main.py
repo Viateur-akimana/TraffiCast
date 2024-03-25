@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .models import TrafficPredictionInput, model
+from .models import PredictionInput, model, TrafficDataFetcher
 
 app = FastAPI()
 
-# Allow CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -13,12 +12,20 @@ app.add_middleware(
 )
 
 @app.post("/predict")
-async def predict(data: TrafficPredictionInput):
-    input_data = [[
-        data.temperature,
-        data.rainfall,
+async def predict(data: PredictionInput):
+    weather = TrafficDataFetcher.get_weather(data.city)
+    traffic = TrafficDataFetcher.get_traffic(data.lat, data.lon)
+    
+    congestion = model.predict([[
+        weather["temp"],
+        weather["humidity"],
+        weather["rain"],
         data.hour,
-        1 if data.is_weekend else 0,
-    ]]
-    prediction = model.predict(input_data)[0]
-    return {"predicted_traffic": float(prediction)}
+        1 if data.is_weekend else 0
+    ]])[0]
+    
+    return {
+        "congestion": float(congestion),
+        "current_speed": traffic["current_speed"],
+        "free_flow_speed": traffic["free_flow_speed"]
+    }
