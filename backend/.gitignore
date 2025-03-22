@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment variables
+.env
+.env.local
+
+# Virtual environment
+venv/
+.env/
+
+# Test coverage
+.coverage
+*.coverage
+.coverage.*
+
+# IDE/Editor settings
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# FastAPI server runtime
+*.sock
+*.pid
+
+# Miscellaneous
+*.swp
+*.swo
+
+# SQLite database (if using SQLite)
+*.db
+*.sqlite3
